@@ -1,4 +1,4 @@
-# Customer Churn & Salary Prediction
+# ANN Churn Classification & Regression
 
 A machine learning application that predicts customer churn probability and estimated salary using Artificial Neural Networks (ANNs). Built with TensorFlow, Scikit-learn, and Streamlit.
 
@@ -6,10 +6,11 @@ A machine learning application that predicts customer churn probability and esti
 
 - **Churn Prediction (Classification)**: Predicts whether a customer will leave using a binary classification ANN model
 - **Salary Prediction (Regression)**: Estimates customer salary based on profile attributes using a regression ANN model
-- **Interactive UI**: Tab-based Streamlit interface for easy model interaction
-- **Hyperparameter Tuning**: Grid search optimization for both classification and regression models
-- **TensorBoard Integration**: Training visualization and metrics tracking
-- **Model Persistence**: Save and load trained models for inference
+- **Interactive UI**: Tab-based Streamlit interface for easy model interaction and real-time predictions
+- **Hyperparameter Tuning**: Grid search optimization with cross-validation for both classification and regression models
+- **TensorBoard Integration**: Training visualization and metrics tracking with event logs
+- **Model Persistence**: Save and load trained models for inference and deployment
+- **Feature Engineering**: Comprehensive data preprocessing including encoding and scaling
 
 ## Project Structure
 
@@ -17,21 +18,23 @@ A machine learning application that predicts customer churn probability and esti
 .
 ├── app.py                              # Streamlit web application (main entry point)
 ├── requirements.txt                    # Python dependencies
-├── Churn_Modelling.csv                # Dataset
-├── experiments.ipynb                   # Initial ANN experimentation & training
-├── hyperparametertuningann.ipynb       # Classification model hyperparameter tuning
-├── hyperparametertuningrgresn.ipynb    # Regression model hyperparameter tuning
-├── salaryregression.ipynb              # Regression model training pipeline
-├── prediction.ipynb                    # Prediction testing notebook
-├── churn_classification_model.h5       # Trained classification model
-├── salary_regression_model.h5          # Trained regression model
-├── label_encoder_gender.pkl            # Gender encoder
-├── onehot_encoder_geo.pkl              # Geography one-hot encoder
-├── scaler.pkl                          # Features scaler for classification
-├── scaler_reg.pkl                      # Features scaler for regression
-├── model.h5                            # Additional model checkpoint
-└── logs/                               # TensorBoard logs directory
-    └── fit/                            # Training event logs
+├── README.md                           # Project documentation
+├── .gitignore                          # Git ignore configurations
+├── Churn_Modelling.csv                 # Customer dataset with churn and salary labels
+├── churn_classification.ipynb          # Initial ANN experimentation & classification model training
+├── hyperparametertuningcls.ipynb       # Classification model hyperparameter tuning with GridSearchCV
+├── hyperparametertuningrgresn.ipynb    # Regression model hyperparameter tuning with GridSearchCV
+├── salaryregression.ipynb              # Regression model training and evaluation pipeline
+├── prediction.ipynb                    # Model prediction testing and validation notebook
+├── (Model files - ignored in git)
+│   ├── churn_classification_model.h5   # Trained classification model (ANN)
+│   ├── salary_regression_model.h5      # Trained regression model (ANN)
+│   ├── label_encoder_gender.pkl        # Gender label encoder
+│   ├── onehot_encoder_geo.pkl          # Geography one-hot encoder
+│   ├── scaler_classification.pkl                      # StandardScaler for classification features
+│   └── scaler_reg_regression.pkl                  # StandardScaler for regression features
+└── (TensorBoard logs - ignored in git)
+    └── logs/fit/                       # TensorBoard event logs for training metrics
 ```
 
 ## Installation
@@ -40,14 +43,15 @@ A machine learning application that predicts customer churn probability and esti
 
 - Python 3.9+
 - pip or conda
+- Git
 
 ### Setup
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/customer-churn-salary-predictor.git
-   cd customer-churn-salary-predictor
+   git clone https://github.com/Pranav-Vishwanatham/ANN-Churn-Classification-Regression
+   cd ANN-Churn-Classification-Regression
    ```
 
 2. **Create a virtual environment**
@@ -70,190 +74,297 @@ A machine learning application that predicts customer churn probability and esti
 streamlit run app.py
 ```
 
-The app will open at `http://localhost:8501` with two tabs:
+The application will open with two interactive tabs:
 
 #### Tab 1: Churn Prediction
 
-- Input customer attributes (Credit Score, Age, Balance, Tenure, etc.)
-- Get probability of customer churn (0-1)
+- Input customer attributes:
+  - Credit Score, Gender, Age, Geography
+  - Tenure, Balance, Number of Products
+  - Has Credit Card, Is Active Member
+  - Estimated Salary
+- Output: Churn probability (0-1 scale)
 - Interpretation: > 0.5 = likely to churn, ≤ 0.5 = likely to stay
 
 #### Tab 2: Salary Prediction
 
-- Input customer attributes (excluding salary)
-- Select customer status (Exited: 0 = Active, 1 = Churned)
-- Get estimated salary prediction
+- Input customer attributes (same as above except salary)
+- Select customer exit status: Exited (0 = Active, 1 = Churned)
+- Output: Estimated salary prediction in currency format
 
 ### Training Models
 
-#### Classification Model (Churn Prediction)
+#### 1. Classification Model (Churn Prediction)
+
+**Initial Training & Experimentation:**
 
 ```bash
-jupyter notebook experiments.ipynb
+jupyter notebook churn_classification.ipynb
 ```
 
-Then run hyperparameter tuning:
+**Hyperparameter Tuning:**
 
 ```bash
-jupyter notebook hyperparametertuningann.ipynb
+jupyter notebook hyperparametertuningcls.ipynb
 ```
 
-#### Regression Model (Salary Prediction)
+#### 2. Regression Model (Salary Prediction)
+
+**Model Training & Evaluation:**
 
 ```bash
 jupyter notebook salaryregression.ipynb
 ```
 
-Then run hyperparameter tuning:
+**Hyperparameter Tuning:**
 
 ```bash
 jupyter notebook hyperparametertuningrgresn.ipynb
 ```
 
-### Viewing Training Metrics (TensorBoard)
+#### 3. Prediction Testing
+
+**Test predictions and validate model performance:**
+
+```bash
+jupyter notebook prediction.ipynb
+```
+
+### Viewing Training Metrics with TensorBoard
+
+After training, visualize your model training curves and metrics:
 
 ```bash
 tensorboard --logdir logs/fit/
 ```
 
-Open `http://localhost:6006` in your browser to visualize training curves.
+Open `http://localhost:6006` in your browser to see:
+
+- Loss curves (training vs validation)
+- Accuracy metrics
+- Histograms of weights
+- Other training statistics
 
 ## Model Architecture
 
-### Classification Model (Churn)
+### Classification Model (Churn Prediction)
 
-- Input Layer: 11 features (after encoding & one-hot)
-- Hidden Layer 1: 64 neurons + ReLU
-- Hidden Layer 2: 32 neurons + ReLU
-- Output Layer: 1 neuron + Sigmoid
-- Loss: Binary Crossentropy
-- Optimizer: Adam (lr=0.01)
+- **Input Layer**: 11 features (CreditScore, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary, Geography_encoded)
+- **Hidden Layer 1**: 64 neurons + ReLU activation
+- **Output Layer**: 1 neuron + Sigmoid activation
+- **Loss Function**: Binary Crossentropy
+- **Optimizer**: Adam (learning_rate=0.0001)
+- **Metrics**: Accuracy
+- **Callbacks**: TensorBoard logging
 
-### Regression Model (Salary)
+### Regression Model (Salary Prediction)
 
-- Input Layer: 12 features (including Exited status)
-- Hidden Layer 1: 64 neurons + ReLU
-- Hidden Layer 2: 32 neurons + ReLU
-- Output Layer: 1 neuron + Linear
-- Loss: Mean Squared Error (MSE)
-- Optimizer: Adam
+- **Input Layer**: 10 features (CreditScore, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, Geography_encoded)
+- **Hidden Layer 1**: 128 neurons + ReLU activation
+- **Hidden Layer 2**: 128 neurons + ReLU activation
+- **Output Layer**: 1 neuron + Linear activation (default)
+- **Loss Function**: Mean Absolute Error (MAE)
+- **Optimizer**: Adam (learning_rate=0.0001)
+- **Metrics**: MAE (Mean Absolute Error)
+- **Callbacks**: TensorBoard logging
 
-## Data Preprocessing
+## Data Preprocessing Pipeline
 
-1. **Feature Engineering**
-   - Removed ID columns (RowNumber, CustomerId, Surname)
-   - Label encoded categorical: Gender
-   - One-hot encoded categorical: Geography
-   - Numerical features: StandardScaler normalization
+### Step 1: Data Loading & Cleaning
 
-2. **Train-Test Split**
-   - 80-20 split with `random_state=42`
-   - Stratified splitting for classification
+- Load `Churn_Modelling.csv` (10,000 customer records)
+- Drop irrelevant columns: RowNumber, CustomerId, Surname
+- Handle missing values (none present in this dataset)
 
-3. **Feature Sets**
-   - Classification: All features except target (Exited)
-   - Regression: All features except target (EstimatedSalary) but includes Exited
+### Step 2: Feature Engineering
 
-## Dependencies
+- **Label Encoding**: Gender → {0, 1}
+- **One-Hot Encoding**: Geography → France, Germany, Spain (3 binary columns)
+- **Normalization**: StandardScaler on all numerical features
 
-Key packages (see `requirements.txt` for full list):
+### Step 3: Train-Test Split
 
-- `tensorflow==2.15.0` - Deep learning framework
-- `numpy==1.26.4` - Numerical computing
-- `scikit-learn==1.3.0` - Machine learning utilities
-- `scikeras==0.12.0` - Scikit-learn wrapper for Keras
-- `streamlit` - Web app framework
-- `pandas` - Data manipulation
-- `tensorboard` - Training visualization
+- 80-20 split with `random_state=42`
+- Classification: Stratified split to preserve class distribution
+- Both splits use same random state for reproducibility
 
-## Hyperparameter Tuning
+### Step 4: Feature Organization
 
-The project includes GridSearchCV optimization for:
+**Classification (Churn):**
 
-**Classification**
+- Input: 11 features (all except Exited)
+- Target: Exited (binary: 0/1)
 
-- Neurons: [16, 32, 64, 128]
-- Layers: [1, 2]
-- Epochs: [50, 100]
-- CV: 3-fold cross-validation
+**Regression (Salary):**
 
-**Regression**
+- Input: 12 features (all except EstimatedSalary, includes Exited)
+- Target: EstimatedSalary (continuous values)
 
-- Neurons: [16, 32, 64, 128]
-- Layers: [1, 2]
-- Epochs: [50, 100]
-- CV: 3-fold cross-validation
+## Dependencies & Requirements
 
-## Results & Performance
+Key packages (complete list in `requirements.txt`):
 
-### Classification (Churn)
+```
+tensorflow==2.15.0        # Deep learning framework
+tensorflow-macos==2.15.0  # macOS specific version
+tensorflow-metal          # Metal GPU acceleration (macOS)
+keras==2.15.0            # Keras API
+numpy==1.26.4            # Numerical computing (MUST be <2.0)
+scikit-learn==1.3.0      # ML utilities, preprocessing, GridSearchCV
+scikeras==0.12.0         # Scikit-learn wrapper for Keras models
+pandas                    # Data manipulation and analysis
+streamlit                 # Web application framework
+tensorboard              # Training visualization and monitoring
+matplotlib               # Data visualization
+```
 
-- Metrics: Accuracy, Precision, Recall, F1-Score
-- Cross-validation with early stopping
+**Important**: NumPy must be <2.0 due to TensorFlow 2.15 compatibility. Using NumPy 2.0+ will cause `_ARRAY_API` errors.
 
-### Regression (Salary)
+## Hyperparameter Tuning with GridSearchCV
 
-- Metrics: MAE, MSE, RMSE, R²
-- Cross-validation with early stopping
+Both models use GridSearchCV for systematic hyperparameter optimization:
 
-(Add actual performance metrics after training)
+### Classification Tuning
 
-## Common Issues & Solutions
+```python
+param_grid = {
+    'neurons': [16, 32, 64, 128],      # Hidden layer size
+    'layers': [1, 2],                  # Number of hidden layers
+    'epochs': [50, 100]                # Training epochs
+}
+# Total: 4 × 2 × 2 = 16 parameter combinations
+# With 3-fold CV: 16 × 3 = 48 model fits
+```
 
-### ImportError: `_ARRAY_API not found`
+### Regression Tuning
 
-- **Cause**: TensorFlow 2.16+ incompatible with NumPy 2.0+
-- **Solution**: Use TF 2.15.0 and NumPy <2.0
-  ```bash
-  pip install tensorflow==2.15.0 "numpy<2.0"
-  ```
+Same grid search parameters as classification:
 
-### Feature Names Mismatch in Scaler
+```python
+param_grid = {
+    'neurons': [16, 32, 64, 128],
+    'layers': [1, 2],
+    'epochs': [50, 100]
+}
+# Total: 16 combinations × 3 folds = 48 fits
+```
 
-- **Cause**: Training features don't match app input features
-- **Solution**: Ensure app features match training data preprocessing, especially `Exited` inclusion
+Best models are selected based on CV scores and saved for deployment.
 
-### Port Already in Use (TensorBoard/Streamlit)
+## Model Performance & Evaluation Metrics
 
-- **Solution**: Specify custom port
-  ```bash
-  tensorboard --logdir logs/fit/ --port=6008
-  streamlit run app.py --server.port 8502
-  ```
+### Classification (Churn Prediction)
 
-## Future Improvements
+- **Accuracy**: Overall proportion of correct predictions
 
-- [ ] Add model explainability (SHAP, LIME)
-- [ ] Implement ensemble methods (Random Forest, Gradient Boosting)
-- [ ] Add data validation & error handling in app
-- [ ] Deploy to cloud (AWS, GCP, Heroku)
-- [ ] Create REST API with FastAPI
-- [ ] Add confidence intervals for predictions
-- [ ] Implement A/B testing framework
-- [ ] Add feature importance visualization
+### Regression (Salary Prediction)
 
-## Contributing
+- **MAE**: Average absolute prediction error in currency units
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit changes (`git commit -am 'Add new feature'`)
-4. Push to branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
+## Project Files Guide
 
-## License
+| File                               | Purpose                                  | Type               |
+| ---------------------------------- | ---------------------------------------- | ------------------ |
+| `app.py`                           | Streamlit web application                | Production Code    |
+| `churn_classification.ipynb`       | Initial classification model development | Notebook           |
+| `hyperparametertuningcls.ipynb`    | GridSearchCV for classification tuning   | Notebook           |
+| `salaryregression.ipynb`           | Regression model development             | Notebook           |
+| `hyperparametertuningrgresn.ipynb` | GridSearchCV for regression tuning       | Notebook           |
+| `prediction.ipynb`                 | Model testing and validation             | Notebook           |
+| `Churn_Modelling.csv`              | Training dataset                         | Data (10K records) |
+| `requirements.txt`                 | Python package dependencies              | Config             |
+| `README.md`                        | Project documentation                    | Documentation      |
+| `.gitignore`                       | Git ignore patterns                      | Config             |
 
-This project is licensed under the MIT License - see LICENSE file for details.
+## Common Issues & Troubleshooting
 
-## Author
+### Issue 1: `ImportError: _ARRAY_API not found`
 
-Pranav
+**Cause**: Incompatible TensorFlow/NumPy versions
+**Solution**:
 
-## Contact
+```bash
+pip install tensorflow==2.15.0 "numpy<2.0" scikit-learn==1.3.0
+```
 
-For questions or feedback, please open an issue in the repository.
+### Issue 2: Feature Names Mismatch Error
 
-## Acknowledgments
+**Cause**: Scaler trained on different features than prediction input
+**Solution**: Ensure training and prediction use identical feature sets
 
-- Dataset: [Churn Modelling Dataset](https://www.kaggle.com/)
-- TensorFlow & Keras documentation
-- Streamlit community
+- Classification: Exited is target, NOT input
+- Regression: Include Exited as input feature
+
+### Issue 3: Port Already in Use
+
+**Cause**: Previous Streamlit/TensorBoard process still running
+**Solution**:
+
+```bash
+# Use different ports
+tensorboard --logdir logs/fit/ --port=6008
+streamlit run app.py --server.port=8502
+```
+
+### Issue 4: CUDA Not Found (GPU)
+
+**Note**: On macOS with Apple Silicon, Metal acceleration is used automatically
+
+- No additional setup required
+- TensorFlow detects and uses Metal GPU acceleration
+
+### Issue 5: Scikeras KerasClassifier for Regression
+
+**Cause**: Using KerasClassifier for continuous targets
+**Solution**: Use KerasRegressor for regression tasks
+
+```python
+from scikeras.wrappers import KerasRegressor
+model = KerasRegressor(build_fn=create_model, ...)
+```
+
+## Future Enhancements & Roadmap
+
+- [ ] Add SHAP/LIME interpretability for model decisions
+- [ ] Implement ensemble methods (Random Forest, XGBoost, Voting)
+- [ ] Add comprehensive input validation and error handling
+- [ ] Deploy on cloud (AWS SageMaker, Google Cloud AI, Azure ML Service)
+- [ ] Develop FastAPI backend for REST API integration
+- [ ] Add prediction confidence intervals and uncertainty estimates
+- [ ] Implement A/B testing framework for model variants
+- [ ] Feature importance analysis with visualization
+- [ ] Docker containerization for easy deployment
+- [ ] Batch prediction capability for CSV files
+
+## Contributing Guidelines
+
+Contributions welcome! Please follow these steps:
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/your-feature-name`)
+3. Make your changes with clear, descriptive commit messages
+4. Test your changes thoroughly
+5. Push to your fork (`git push origin feature/your-feature-name`)
+6. Open a Pull Request with detailed description
+
+## Project License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for full details.
+
+## Contact & Support
+
+Have questions or found a bug?
+
+- **GitHub Issues**: Open an issue on the repository
+- **Email**: pranav@example.com
+- **Discussion**: Start a discussion in the repository
+
+## Acknowledgments & Resources
+
+- **Dataset**: [Kaggle Churn Modelling](https://www.kaggle.com/shrutimechlearn/churn-modelling)
+- **Framework Docs**:
+  - TensorFlow: https://www.tensorflow.org/
+  - Streamlit: https://docs.streamlit.io/
+  - Scikit-learn: https://scikit-learn.org/
+  - SciKeras: https://adriangb.com/scikeras/
+- **Community**: Thanks to the open-source ML community for inspiration and tools
