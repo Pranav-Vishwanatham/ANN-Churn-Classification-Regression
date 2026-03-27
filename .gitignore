@@ -1,0 +1,50 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Model files (trained models) - DO NOT PUSH
+*.h5
+*.keras
+*.pkl
+*.pickle
+*.joblib
+
+# TensorBoard logs - DO NOT PUSH
+logs/
+regressionlogs/
+runs/
+
+# Streamlit cache
+.streamlit/
+*.streamlit.app
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
